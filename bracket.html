@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+  <title>fencing bracket</title>
+  <meta name="viewport" content="width=device-width">
+  <link href="/css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.slim.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <style>
+table {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+td {
+  text-align: right;
+  overflow: hidden;
+  padding: 5px 0;
+}
+
+td div {
+  border-right: 2px solid black;
+  position: relative;
+  max-width: 200px;
+  padding: 0 10px;
+}
+
+td div:before, td div:after {
+  height: 2px;
+  width: 500px;
+  background-color: black;
+  position: absolute;
+  right: -2px;
+}
+
+td div:first-child:before {
+  content: "";
+  bottom: 100%;
+}
+
+td div:last-child:after {
+  content: "";
+  top: 100%;
+}
+
+td span {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+  </style>
+</head>
+<body>
+  <table></table>
+  <script>
+const socket = io.connect({query: 'path=' + location.pathname});
+socket.on('bracket', data => {
+  const teams = {}, rows = [];
+  let index = 0;
+  for (let i = data.length - 1; i >= 0; --i) {
+    for (const datum of data[i]) {
+      let start = -1;
+      for (const [, team] of datum) {
+        if (team in teams) {
+          start = teams[team];
+          break;
+        }
+      }
+      if (start < 0) {
+        start = index;
+        index += 1 << i;
+      }
+      while (rows.length < start + 1)
+        rows.push($('<tr>').appendTo('table'));
+      const cell = $('<td>').attr('rowspan', 1 << i).prependTo(rows[start]);
+      datum.forEach(([side, team], j) => {
+        const line = $('<span>').text(team);
+        if (side) line.addClass(side);
+        if (team in teams) line.css('font-weight', 'bold');
+        else if (i + 1 != data.length)
+          line.css('text-decoration', 'line-through');
+        const box = $('<div>').append(line).appendTo(cell);
+        if (side) box.css(j ? 'padding-bottom': 'padding-top',
+            12 * ((1 << i) - 1) + 'px');
+        teams[team] = start;
+        start += 1 << (i - 1);
+      });
+    }
+  }
+});
+  </script>
+</body>
+</html>

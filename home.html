@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<head>
+  <title>xdm</title>
+  <meta name="viewport" content="width=device-width">
+  <link href="/css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.slim.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <style>
+button {
+  border-top: none;
+  font-size: 24px;
+  padding: 15px 0 20px;
+}
+
+main {
+  margin: auto;
+  width: 500px;
+}
+
+a {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 100px;
+  padding: 10px 0;
+  text-decoration: none;
+}
+
+span {
+  font-size: 36px;
+  opacity: 0.5;
+}
+
+.neutral span {
+  font-size: 12px;
+  margin-bottom: 1em;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.neutral {
+  color: black;
+  width: 200px;
+}
+  </style>
+</head>
+<body>
+  <button class="neutral">new game</button>
+  <main></main>
+  <script>
+function makeLink(team, id, counts) {
+  return $('<a>').addClass(team).attr('href', `/${id}/${team}`).append(
+      $('<span>').text(counts[team] || 0), team);
+}
+
+function makeRow([date, id, counts]) {
+  button.disabled = false;
+  if (!$(`#${id}`)[0]) {
+    const center = $('<a>').addClass('neutral').attr('href', `/${id}`).append(
+        $('<b>').text(id), $('<span>'), 'spectate');
+    $('<div>').addClass('row bar').attr('id', id).prependTo('main').append(
+        makeLink('red', id, counts), center, makeLink('blue', id, counts));
+  }
+  $(`#${id} .neutral span`).text(new Date(date).toLocaleString());
+}
+
+const socket = io.connect({query: 'path=' + location.pathname});
+socket.on('all', data => {
+  $('main').empty();
+  data.forEach(makeRow);
+});
+socket.on('one', makeRow);
+socket.on('num', ([id, side, count]) => $(`#${id} .${side} span`).text(count));
+const [button] = $('button').click(() => {
+  button.disabled = true;
+  socket.emit('new', {}, console.warn);
+});
+  </script>
+</body>
+</html>

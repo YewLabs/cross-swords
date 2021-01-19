@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=PT+Sans+Caption:wght@400;700&display=swap');
+
+body {
+  font-family: 'PT Sans Caption', sans-serif;
+  margin: 0;
+  text-align: center;
+}
+
+button {
+  background-color: #bbb;
+  border: 1px solid currentColor;
+  display: inline-block;
+  font-family: inherit;
+}
+
+button:enabled  { cursor: pointer; }
+button:disabled { color: #999;     }
+
+a:hover, a:focus, button:enabled:hover, button:enabled:focus {
+  background-color: currentColor;
+  background-image:
+      linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9));
+  outline: none;
+}
+
+.bar {
+  position: relative;
+}
+
+.bar:before {
+  background-color: #bbb;
+  content: "";
+  display: block;
+  height: 1px;
+  left: 16px;
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  z-index: -1;
+}
+
+.bar > * {
+  background-color: white;
+  border: 1px solid currentColor;
+}
+
+.red    { color: #c66; }
+.blue   { color: #66c; }
+.yellow { color: #cc0; }
+.purple { color: #c0c; }
+
+section {
+  max-width: 480px;
+  margin: auto;
+}
+
+dl {
+  text-align: left;
+}
+
+dt {
+  float: left;
+  font-weight: bold;
+  width: 100px;
+}
+
+dd {
+  margin-bottom: 10px;
+  margin-left: 100px;
+}

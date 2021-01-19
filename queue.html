@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+<head>
+  <title>fencing lobby</title>
+  <meta name="viewport" content="width=device-width">
+  <link href="/css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.slim.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <style>
+button {
+  font-size: 24px;
+  padding: 15px 0 20px;
+  color: black;
+  width: 240px;
+  margin-bottom: 30px;
+}
+
+label {
+  display: block;
+  margin: 60px 0 30px;
+}
+
+input {
+  font-size: 20px;
+  width: 200px;
+  text-align: center;
+}
+  </style>
+</head>
+<body>
+  <label>Your name (optional):<br><input maxlength="32" id="name"></label>
+  <button>join the queue</button>
+  <script>
+const socket = io.connect({query: 'path=' + location.pathname});
+const [button] = $('button').click(() => {
+  button.textContent = 'looking for match';
+  button.disabled = true;
+  socket.emit('new', $('#name').val());
+});
+socket.on('start', data => document.location = '/' + data);
+$('#name').val(localStorage.name || '');
+$('#name').on('input', () => localStorage.name = $('#name').val());
+  </script>
+  <section>
+    <h3>how to play</h3>
+    <dl>
+      <dt>game</dt><dd>
+        In this event, you'll <i>cross swords</i> with another team in a race
+        to fill a crossword grid!
+      </dd>
+      <dt>visibility</dt><dd>
+        You can see your starting corner, plus any clue that you have a
+        letter in. You'll have to enter letters correctly to see more of
+        the grid.
+      </dd>
+      <dt>navigating</dt><dd>
+        Click in the grid or the list of clues to move around the grid. Type
+        letters to guess (the cursor will automatically advance along the
+        current clue).
+      </dd>
+      <dt>guessing</dt><dd>
+        A correct guess claims that square for your color. An incorrect guess
+        locks the square out for a little while. You can guess again after
+        that, or the other team might get it in the meantime!
+      </dd>
+      <dt>hints</dt><dd>
+        Click "reveal square" with a square selected to instantly claim it.
+        Hints regenerate after 30 seconds, so don't be afraid to use them.
+      </dd>
+      <dt>victory</dt><dd>
+        You can see your current score and a timer above the grid. If you
+        claim a majority of the grid, or have more squares than your opponent
+        when the timer runs out, you win!
+      </dd>
+      <dt>replay</dt><dd>
+        After the game ends, you can use the slider at the bottom to replay
+        all the moves.
+      </dd>
+    </dl>
+  </section>
+</body>
+</html>

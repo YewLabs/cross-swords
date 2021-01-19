@@ -1,0 +1,12 @@
+{
+  "name": "xdm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "console-stamp": "^0.2.9",
+    "express": "^4.17.1",
+    "puzjs": "^1.0.2",
+    "socket.io": "^2.3.0"
+  }
+}

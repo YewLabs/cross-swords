@@ -1,0 +1,7 @@
+data/
+made/
+node_modules/
+real/
+save/
+package-lock.json
+tourney*
